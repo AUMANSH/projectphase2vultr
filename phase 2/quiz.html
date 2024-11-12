@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #155bd5;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 150px;
+            background-color: #f4f4f4;
+            padding: 20px;
+            box-shadow: 3px 0 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar li {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            text-align: center;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar li:hover {
+            background-color: var(--primary);
+        }
+
+        .sidebar li.selected {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Main Quiz Container */
+        .quiz-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            width: 90%;
+            min-height: 400px;
+            margin-left: 20px;
+            position: relative;
+            height: 550px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary);
+        }
+
+        .question {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-size: 20px;
+        }
+
+        .options {
+            list-style: none;
+            padding: 0;
+            font-size: 18px;
+        }
+
+        .options li {
+            padding: 15px;
+            background: #e4e4e4;
+            border-radius: 5px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            border: 1px solid var(--primary);
+            color: #333;
+        }
+
+        .options li:hover {
+            background-color: #d1d1d1;
+            transform: translateY(-2px);
+        }
+
+        .options li.selected {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .progress {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: var(--primary);
+            width: 0;
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        /* Button container to fix position */
+        .buttons {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Styling for Previous and Next buttons */
+        .arrow-button {
+            background-color: var(--primary);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 12px 24px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .arrow-button:hover {
+            background-color: #004ca3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .arrow-button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Results Styling */
+        .results-container {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+            background-color: #ffffff;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .results-container h1 {
+            font-size: 36px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .score {
+            font-size: 48px;
+            color: var(--primary);
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .results-container p {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .start-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f9f9f9;
+        }
+
+        .instructions {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .start-button {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .start-button:hover {
+            background-color: #004ca3;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 30vw;
+            }
+
+            .quiz-container {
+                width: 100%;
+            }
+
+            .question, .options li {
+                font-size: 16px;
+            }
+
+            .sidebar li {
+                font-size: 16px;
+            }
+
+            .score {
+                font-size: 24px;
+            }
+        }
+
+        .instructions{
+            background-color: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);;
+            font-size: 20px;
+        }
+
+        .instructions p span{
+            color: red;
+        }
+        .results-container p{
+            font-size: 40px;
+            color: black;
+        }
+        .results-container h2{
+            font-size: 30px;
+            color: rgb(186, 9, 9);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Start Quiz Page -->
+    <div class="start-container" id="startContainer">
+        <div class="instructions">
+            <h1>Welcome to Risk Analysis Test!</h1>
+            <p><span>Note:</span> There is no correct/Wrong answers,<br> Try to give most Relevant answer!</p>
+            <p>Click "Start RAT" to begin.</p>
+        </div>
+        <button class="start-button" id="startButton">Start RAT</button>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar" style="display:none;">
+        <h2 style="text-align: center; color: #333; font-size: 20px;">Quiz Navigation</h2>
+        <ul id="questionList">
+            <!-- Question list will be dynamically injected here -->
+        </ul>
+    </div>
+
+    <!-- Main Quiz Container -->
+    <div class="quiz-container" id="quizContainer" style="display:none;">
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <form id="quizForm">
+            <div class="question" id="questionContainer">
+                <!-- Questions will be injected here -->
+            </div>
+        </form>
+
+        <div class="buttons">
+            <button type="button" id="prevButton" class="arrow-button" style="display:none;">Previous</button>
+            <button type="button" id="nextButton" class="arrow-button">Next</button>
+            <button type="button" id="finishButton" class="arrow-button" style="display:none;">Finish Quiz</button>
+        </div>
+    </div>
+
+    <!-- Results Container -->
+    <div class="results-container" id="resultsContainer">
+        <h1>Quiz Finished!</h1>
+        <h2>Your RAT Score : </h2>
+        <p id="scoreText" class="score"></p>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "1. What is your age?", options: ["a. 15-30", "b. 30-45", "c. 45-60", "d. 60+"], values: [9, 8, 7, 6] },
+            { question: "2. Net annual income of the family combined?", options: [">18+ lakhs", "14-18 lakhs", "10-14 lakhs", ">10 lakhs"], values: [9, 7, 6, 5] },
+            { question: "3. Ideal Preferred mode of investing?", options: ["a. Stocks", "b. Mutual Fund’s", "c. Gold", "d. FD/ETF’s"], values: [8, 6, 5, 4] },
+            { question: "4. Any ongoing SIP > 5000 rupees?", options: ["a. Yes", "b. No"], values: [9, 5] },
+            { question: "5. Investment time horizon?", options: ["a. Short term(1-2 years)", "b. Medium term(2-5 years)", "c. Long term(5+ years)"], values: [6, 7, 8] },
+            { question: "6. Are you a tax payer and have job security?", options: ["a. Yes", "b. No"], values: [8, 5] },
+            { question: "7. If NIFTY50 drops by 10% in one day?", options: ["a. Sell off every stock", "b. Sell some, keep some", "c. Buy more after drop"], values: [6, 7, 8] },
+            { question: "8. You are an active investor or passive investor?", options: ["a. Active", "b. Passive"], values: [8, 5] },
+            { question: "9. Savings for next 6 months (30% of Monthly Income) x 6?", options: ["a. Yes", "b. No"], values: [9, 5] },
+            { question: "10. Have term insurance?", options: ["a. Yes", "b. No"], values: [8, 5] }
+        ];
+
+        let currentQuestionIndex = 0;
+        const selectedAnswers = new Array(questions.length).fill(null);
+        const questionContainer = document.getElementById('questionContainer');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+        const finishButton = document.getElementById('finishButton');
+        const progressBar = document.getElementById('progressBar');
+        const questionList = document.getElementById('questionList');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const scoreText = document.getElementById('scoreText');
+        const startContainer = document.getElementById('startContainer');
+        const quizContainer = document.getElementById('quizContainer');
+        const sidebar = document.getElementById('sidebar');
+
+        // Load question
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            questionContainer.innerHTML = `
+                <div class="question">
+                    <p>${question.question}</p>
+                    <ul class="options">
+                        ${question.options.map((opt, index) => {
+                            const isSelected = selectedAnswers[currentQuestionIndex] === question.values[index] ? 'selected' : '';
+                            return `<li data-value="${question.values[index]}" class="${isSelected}">${opt}</li>`;
+                        }).join('')}
+                    </ul>
+                </div>
+            `;
+            updateProgress();
+            updateSidebar();
+            updateButtons();
+        }
+
+        // Update Progress Bar
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Update Sidebar Navigation
+        function updateSidebar() {
+            questionList.innerHTML = questions.map((_, index) => {
+                const isSelected = index === currentQuestionIndex ? 'selected' : '';
+                return `<li data-index="${index}" class="${isSelected}">Q${index + 1}</li>`;
+            }).join('');
+        }
+
+        // Update Buttons visibility
+        function updateButtons() {
+            prevButton.style.display = currentQuestionIndex === 0 ? 'inline-block' : 'inline-block';
+            finishButton.style.display = currentQuestionIndex === questions.length - 1 ? 'inline-block' : 'none';
+            nextButton.style.display = currentQuestionIndex === questions.length - 1 ? 'none' : 'inline-block';
+            prevButton.style.visibility = currentQuestionIndex === 0 ? 'hidden' : 'visible';
+
+
+
+        }
+
+        // Handle Option Selection
+        function handleOptionClick(event) {
+            if (event.target.tagName === 'LI') {
+                const value = parseInt(event.target.getAttribute('data-value'));
+                selectedAnswers[currentQuestionIndex] = value;
+                loadQuestion();
+            }
+        }
+
+        // Handle Navigation
+        function handleNavigation(direction) {
+            if (direction === 'next' && currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+            } else if (direction === 'prev' && currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+            }
+
+            if (currentQuestionIndex === questions.length) {
+                showResults();
+            } else {
+                loadQuestion();
+            }
+        }
+
+        // Show Results
+        function showResults() {
+            let score = 0;
+            selectedAnswers.forEach(answer => {
+                score += answer || 0;
+            });
+
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            sidebar.style.display='none';
+            scoreText.innerHTML = ` ${score} / 100 `;
+        }
+
+        document.getElementById('startButton').addEventListener('click', () => {
+            startContainer.style.display = 'none';
+            quizContainer.style.display = 'block';
+            sidebar.style.display = 'block';
+            loadQuestion();
+        });
+
+        prevButton.addEventListener('click', () => handleNavigation('prev'));
+        nextButton.addEventListener('click', () => handleNavigation('next'));
+        finishButton.addEventListener('click', showResults);
+        questionContainer.addEventListener('click', handleOptionClick);
+    </script>
+
+</body>
+</html>
